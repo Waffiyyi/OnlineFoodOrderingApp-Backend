@@ -31,26 +31,26 @@ public class AdminRestaurantController {
     @PutMapping("/update")
     public ResponseEntity<Restaurant> updateRestaurant(
             @RequestBody CreateRestaurantRequest req,
-            @RequestParam Long id
+            @RequestParam Long restaurantId
     ) throws Exception {
-        Restaurant restaurant = restaurantService.updateRestaurant(id, req);
+        Restaurant restaurant = restaurantService.updateRestaurant(restaurantId, req);
         return new ResponseEntity<>(restaurant, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteRestaurant(
-            @RequestParam Long id
+            @RequestParam Long restaurantId
     ) throws Exception {
 
-        restaurantService.deleteRestaurant(id);
+        restaurantService.deleteRestaurant(restaurantId);
         return new ResponseEntity<>("Successfully deleted restaurant", HttpStatus.OK);
     }
 
     @PutMapping("/update-status")
     public ResponseEntity<Restaurant> updateRestaurantStatus(
-            @RequestParam Long id
+            @RequestParam Long restaurantId
     ) throws Exception {
-        Restaurant restaurant = restaurantService.updateRestaurantStatus(id);
+        Restaurant restaurant = restaurantService.updateRestaurantStatus(restaurantId);
         return new ResponseEntity<>(restaurant, HttpStatus.OK);
     }
 

@@ -22,7 +22,7 @@ public class Restaurant {
     @OneToOne
     private User owner;
 
-    private String name;
+    private String restaurantName;
 
     private String description;
 

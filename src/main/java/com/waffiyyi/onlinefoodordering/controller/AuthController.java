@@ -64,7 +64,7 @@ public class AuthController {
 
         AuthResponse response = AuthResponse.builder()
                 .jwt(jwt)
-                .message("Register sucsess")
+                .message("Register success")
                 .role(savedUser.getRole())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.CREATED);

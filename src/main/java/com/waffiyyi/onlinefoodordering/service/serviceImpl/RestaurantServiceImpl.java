@@ -9,7 +9,6 @@ import com.waffiyyi.onlinefoodordering.repository.AddressRepository;
 import com.waffiyyi.onlinefoodordering.repository.RestaurantRepository;
 import com.waffiyyi.onlinefoodordering.repository.UserRepository;
 import com.waffiyyi.onlinefoodordering.service.RestaurantService;
-import com.waffiyyi.onlinefoodordering.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,9 +30,10 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.setCuisineType(req.getCuisineType());
         restaurant.setDescription(req.getDescription());
         restaurant.setImages(req.getImages());
-        restaurant.setName(req.getName());
+        restaurant.setRestaurantName(req.getRestaurantName());
         restaurant.setOpeningHours(req.getOpeningHours());
         restaurant.setRegistrationDate(LocalDateTime.now());
+        restaurant.setOpen(true);
         restaurant.setOwner(user);
         return restaurantRepository.save(restaurant);
     }
@@ -62,8 +62,8 @@ public class RestaurantServiceImpl implements RestaurantService {
             restaurant.setImages(updateRestaurant.getImages());
         }
 
-        if(updateRestaurant.getName() != null){
-            restaurant.setName(updateRestaurant.getName());
+        if(updateRestaurant.getRestaurantName() != null){
+            restaurant.setRestaurantName(updateRestaurant.getRestaurantName());
         }
 
         if(updateRestaurant.getOpeningHours() != null){
@@ -99,7 +99,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     public Restaurant getRestaurantByUserId(Long userId) throws Exception {
         Restaurant restaurant = restaurantRepository.findByOwnerId(userId);
         if(restaurant == null){
-            throw new Exception("Restaurant not found with id" + userId);
+            throw new Exception("User with ID" + userId+ " does not have a restaurant");
         }
         return restaurant;
     }
@@ -111,15 +111,25 @@ public class RestaurantServiceImpl implements RestaurantService {
           RestaurantDTO restaurantDTO = new RestaurantDTO();
           restaurantDTO.setDescription(restaurant.getDescription());
           restaurantDTO.setImages(restaurant.getImages());
-          restaurantDTO.setTittle(restaurant.getName());
+          restaurantDTO.setTittle(restaurant.getRestaurantName());
           restaurantDTO.setId(restaurant.getId());
 
 
-          if(user.getFavourites().contains(restaurantDTO)){
-              user.getFavourites().remove(restaurantDTO);
-          }
+         boolean isFavorited = false;
 
-          else user.getFavourites().add(restaurantDTO);
+         List<RestaurantDTO> favorites = user.getFavourites();
+         for(RestaurantDTO favorite: favorites){
+             if(favorite.getId().equals(restaurantId)){
+                 isFavorited = true;
+                 break;
+             }
+         }
+
+         if(isFavorited){
+             favorites.removeIf(favorite-> favorite.getId().equals(restaurantId));
+         } else {
+             favorites.add(restaurantDTO);
+         }
 
           userRepository.save(user);
 
@@ -129,7 +139,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public Restaurant updateRestaurantStatus(Long id) throws Exception {
         Restaurant restaurant = findRestaurantById(id);
-        restaurant.setOpen(restaurant.isOpen());
+        restaurant.setOpen(!restaurant.isOpen());
         return restaurantRepository.save(restaurant);
     }
 }
