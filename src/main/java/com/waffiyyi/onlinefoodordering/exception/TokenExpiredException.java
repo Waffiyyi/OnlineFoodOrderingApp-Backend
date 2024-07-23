@@ -1,0 +1,7 @@
+package com.waffiyyi.onlinefoodordering.exception;
+
+public class TokenExpiredException extends RuntimeException{
+    public TokenExpiredException(String message){
+        super(message);
+    }
+}

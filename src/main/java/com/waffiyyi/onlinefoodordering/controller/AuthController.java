@@ -3,6 +3,7 @@ package com.waffiyyi.onlinefoodordering.controller;
 import com.waffiyyi.onlinefoodordering.DTOs.LoginRequestDTO;
 import com.waffiyyi.onlinefoodordering.config.JwtProvider;
 import com.waffiyyi.onlinefoodordering.enums.USER_ROLE;
+import com.waffiyyi.onlinefoodordering.exception.UserNotFoundException;
 import com.waffiyyi.onlinefoodordering.model.Cart;
 import com.waffiyyi.onlinefoodordering.model.User;
 import com.waffiyyi.onlinefoodordering.repository.CartRepository;
@@ -39,10 +40,10 @@ public class AuthController {
     private final CartRepository cartRepository;
 
     @PostMapping("/signup")
-    public ResponseEntity<AuthResponse> createUserHandler(@RequestBody User user) throws Exception {
+    public ResponseEntity<AuthResponse> createUserHandler(@RequestBody User user){
         User isEmailExist = userRepository.findByEmail(user.getEmail());
         if(isEmailExist != null){
-            throw new Exception("Email is already used with another account");
+            throw new UserNotFoundException("Email is already used with another account", HttpStatus.NOT_FOUND);
         }
 
         User createdUser = new User();

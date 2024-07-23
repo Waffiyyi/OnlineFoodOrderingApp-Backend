@@ -2,6 +2,8 @@ package com.waffiyyi.onlinefoodordering.service.serviceImpl;
 
 import com.waffiyyi.onlinefoodordering.DTOs.CreateRestaurantRequest;
 import com.waffiyyi.onlinefoodordering.DTOs.RestaurantDTO;
+import com.waffiyyi.onlinefoodordering.exception.BadRequestException;
+import com.waffiyyi.onlinefoodordering.exception.ResourceNotFoundException;
 import com.waffiyyi.onlinefoodordering.model.Address;
 import com.waffiyyi.onlinefoodordering.model.Restaurant;
 import com.waffiyyi.onlinefoodordering.model.User;
@@ -10,6 +12,7 @@ import com.waffiyyi.onlinefoodordering.repository.RestaurantRepository;
 import com.waffiyyi.onlinefoodordering.repository.UserRepository;
 import com.waffiyyi.onlinefoodordering.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -39,7 +42,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Restaurant updateRestaurant(Long restaurantId, CreateRestaurantRequest updateRestaurant) throws Exception {
+    public Restaurant updateRestaurant(Long restaurantId, CreateRestaurantRequest updateRestaurant){
         Restaurant restaurant = findRestaurantById(restaurantId);
 
         if(updateRestaurant.getAddress()!= null){
@@ -74,7 +77,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public void deleteRestaurant(Long restaurantId) throws Exception {
+    public void deleteRestaurant(Long restaurantId){
        Restaurant restaurant = findRestaurantById(restaurantId);
 
        restaurantRepository.delete(restaurant);
@@ -91,21 +94,21 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Restaurant findRestaurantById(Long id) throws Exception {
-        return restaurantRepository.findById(id).orElseThrow(()-> new Exception("Restaurant not found with id "+ id));
+    public Restaurant findRestaurantById(Long id) {
+        return restaurantRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Restaurant not found with id "+ id, HttpStatus.NOT_FOUND));
     }
 
     @Override
-    public Restaurant getRestaurantByUserId(Long userId) throws Exception {
+    public Restaurant getRestaurantByUserId(Long userId){
         Restaurant restaurant = restaurantRepository.findByOwnerId(userId);
         if(restaurant == null){
-            throw new Exception("User with ID" + userId+ " does not have a restaurant");
+            throw new BadRequestException("User with ID" + userId+ " does not have a restaurant", HttpStatus.BAD_REQUEST);
         }
         return restaurant;
     }
 
     @Override
-    public RestaurantDTO addFavourites(Long restaurantId, User user) throws Exception {
+    public RestaurantDTO addFavourites(Long restaurantId, User user){
           Restaurant restaurant = findRestaurantById(restaurantId);
 
           RestaurantDTO restaurantDTO = new RestaurantDTO();
@@ -137,7 +140,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
-    public Restaurant updateRestaurantStatus(Long id) throws Exception {
+    public Restaurant updateRestaurantStatus(Long id) {
         Restaurant restaurant = findRestaurantById(id);
         restaurant.setOpen(!restaurant.isOpen());
         return restaurantRepository.save(restaurant);

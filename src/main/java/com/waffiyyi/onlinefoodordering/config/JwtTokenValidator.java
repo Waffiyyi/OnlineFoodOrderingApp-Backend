@@ -1,5 +1,6 @@
 package com.waffiyyi.onlinefoodordering.config;
 
+import com.waffiyyi.onlinefoodordering.exception.CustomAuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -7,6 +8,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,7 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.util.List;
-
+@Slf4j
 public class JwtTokenValidator extends OncePerRequestFilter {
 
     @Override
@@ -44,9 +46,12 @@ public class JwtTokenValidator extends OncePerRequestFilter {
                 Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, auth);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-            catch (Exception e) {
-                throw new BadCredentialsException("Invalid token.....");
-
+            catch (CustomAuthenticationException e) {
+                log.error("CustomAuthenticationException: ", e);
+                throw e;
+            } catch (Exception e) {
+                log.error("Exception: ", e);
+                throw new CustomAuthenticationException(e.getMessage());
             }
         }
 

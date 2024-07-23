@@ -9,21 +9,21 @@ import java.util.List;
 
 public interface RestaurantService {
      Restaurant createRestaurant(CreateRestaurantRequest req, User user);
-     Restaurant updateRestaurant(Long restaurantId,CreateRestaurantRequest updateRestaurant) throws Exception;
+     Restaurant updateRestaurant(Long restaurantId,CreateRestaurantRequest updateRestaurant);
 
-     void deleteRestaurant(Long restaurantId) throws Exception;
+     void deleteRestaurant(Long restaurantId);
 
      List<Restaurant> getAllRestaurant();
 
      List<Restaurant> searchRestaurant(String keyword);
 
-     Restaurant findRestaurantById(Long id) throws Exception;
+     Restaurant findRestaurantById(Long id);
 
-     Restaurant getRestaurantByUserId(Long userId) throws Exception;
+     Restaurant getRestaurantByUserId(Long userId);
 
-     RestaurantDTO addFavourites(Long restaurantId, User user) throws Exception;
+     RestaurantDTO addFavourites(Long restaurantId, User user);
 
-     Restaurant updateRestaurantStatus(Long id) throws Exception;
+     Restaurant updateRestaurantStatus(Long id);
 
 
 

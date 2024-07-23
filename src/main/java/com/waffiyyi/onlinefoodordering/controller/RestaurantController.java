@@ -37,7 +37,7 @@ public class RestaurantController {
     @GetMapping("/get")
     public ResponseEntity<Restaurant> getRestaurantById(
             @RequestParam Long restaurantId
-    ) throws Exception {
+    ) {
         Restaurant restaurant = restaurantService.findRestaurantById(restaurantId);
         return new ResponseEntity<>(restaurant, HttpStatus.OK);
     }
@@ -46,7 +46,7 @@ public class RestaurantController {
     public ResponseEntity<RestaurantDTO> addToFavourite(
             @RequestHeader("Authorization") String jwt,
             @RequestParam Long restaurantId
-    ) throws Exception {
+    ){
         User user = userService.findUserByJWTToken(jwt);
         RestaurantDTO restaurant = restaurantService.addFavourites(restaurantId, user);
         return new ResponseEntity<>(restaurant, HttpStatus.OK);

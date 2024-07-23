@@ -20,7 +20,7 @@ public class AdminRestaurantController {
     public ResponseEntity<Restaurant> createRestaurant(
             @RequestBody CreateRestaurantRequest req,
             @RequestHeader("Authorization") String jwt
-            ) throws Exception {
+            ){
 
         User user = userService.findUserByJWTToken(jwt);
 
@@ -32,7 +32,7 @@ public class AdminRestaurantController {
     public ResponseEntity<Restaurant> updateRestaurant(
             @RequestBody CreateRestaurantRequest req,
             @RequestParam Long restaurantId
-    ) throws Exception {
+    ) {
         Restaurant restaurant = restaurantService.updateRestaurant(restaurantId, req);
         return new ResponseEntity<>(restaurant, HttpStatus.OK);
     }
@@ -40,7 +40,7 @@ public class AdminRestaurantController {
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteRestaurant(
             @RequestParam Long restaurantId
-    ) throws Exception {
+    ){
 
         restaurantService.deleteRestaurant(restaurantId);
         return new ResponseEntity<>("Successfully deleted restaurant", HttpStatus.OK);
@@ -49,7 +49,7 @@ public class AdminRestaurantController {
     @PutMapping("/update-status")
     public ResponseEntity<Restaurant> updateRestaurantStatus(
             @RequestParam Long restaurantId
-    ) throws Exception {
+    ) {
         Restaurant restaurant = restaurantService.updateRestaurantStatus(restaurantId);
         return new ResponseEntity<>(restaurant, HttpStatus.OK);
     }
@@ -57,7 +57,7 @@ public class AdminRestaurantController {
     @GetMapping("/user")
     public ResponseEntity<Restaurant> findRestaurantByUserId(
             @RequestHeader("Authorization") String jwt
-    ) throws Exception {
+    ){
         User user = userService.findUserByJWTToken(jwt);
         Restaurant restaurant = restaurantService.getRestaurantByUserId(user.getId());
         return new ResponseEntity<>(restaurant, HttpStatus.OK);
