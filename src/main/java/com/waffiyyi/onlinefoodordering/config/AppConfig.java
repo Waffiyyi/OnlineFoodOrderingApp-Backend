@@ -1,9 +1,12 @@
 package com.waffiyyi.onlinefoodordering.config;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.PasswordManagementDsl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,17 +22,19 @@ import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
+@EnableMethodSecurity
 @EnableWebSecurity
+@AllArgsConstructor
 public class AppConfig {
+    private final JwtTokenValidator jwtTokenValidator;
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.sessionManagement(management-> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(Authorize -> Authorize
                         .requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT_OWNER", "ADMIN")
-                     //   .requestMatchers(HttpMethod.GET, "/api/users/profile").authenticated()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
-                ).addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
+                ).addFilterBefore(jwtTokenValidator, BasicAuthenticationFilter.class)
                 .csrf(csrf-> csrf.disable())
                 .cors(cors->cors.configurationSource(corsConfigurationSource()));
         return http.build();
@@ -43,7 +48,7 @@ public class AppConfig {
                 cfg.setAllowedOrigins(
                         Arrays.asList(
                                 "https://",
-                                "http://localhost:3000"
+                                "http://localhost:5143"
                         )
                 );
                 cfg.setAllowedMethods(Collections.singletonList("*"));
@@ -60,4 +65,5 @@ public class AppConfig {
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
 }
