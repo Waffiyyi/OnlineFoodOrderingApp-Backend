@@ -48,7 +48,7 @@ public class AppConfig {
                 cfg.setAllowedOrigins(
                         Arrays.asList(
                                 "https://",
-                                "http://localhost:5143"
+                                "http://localhost:5173"
                         )
                 );
                 cfg.setAllowedMethods(Collections.singletonList("*"));

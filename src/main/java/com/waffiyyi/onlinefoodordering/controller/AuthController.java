@@ -3,6 +3,7 @@ package com.waffiyyi.onlinefoodordering.controller;
 import com.waffiyyi.onlinefoodordering.DTOs.LoginRequestDTO;
 import com.waffiyyi.onlinefoodordering.config.JwtProvider;
 import com.waffiyyi.onlinefoodordering.enums.USER_ROLE;
+import com.waffiyyi.onlinefoodordering.exception.BadRequestException;
 import com.waffiyyi.onlinefoodordering.exception.UserNotFoundException;
 import com.waffiyyi.onlinefoodordering.model.Cart;
 import com.waffiyyi.onlinefoodordering.model.User;
@@ -10,8 +11,9 @@ import com.waffiyyi.onlinefoodordering.repository.CartRepository;
 import com.waffiyyi.onlinefoodordering.repository.UserRepository;
 import com.waffiyyi.onlinefoodordering.respose.AuthResponse;
 import com.waffiyyi.onlinefoodordering.service.CustomUserDetailsService;
+import com.waffiyyi.onlinefoodordering.validations.EmailValidator;
+import com.waffiyyi.onlinefoodordering.validations.PasswordValidator;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -41,9 +43,16 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> createUserHandler(@RequestBody User user){
+        if (!EmailValidator.isValid(user.getEmail())) {
+            throw new BadRequestException("Invalid email format", HttpStatus.BAD_REQUEST);
+        }
+
+        if (!PasswordValidator.isValid(user.getPassword())) {
+            throw new BadRequestException("Invalid password format", HttpStatus.BAD_REQUEST);
+        }
         User isEmailExist = userRepository.findByEmail(user.getEmail());
         if(isEmailExist != null){
-            throw new UserNotFoundException("Email is already used with another account", HttpStatus.NOT_FOUND);
+            throw new BadRequestException("Email is already used with another account", HttpStatus.BAD_REQUEST);
         }
 
         User createdUser = new User();

@@ -16,7 +16,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class JwtProvider {
-    @Value("${random.secret.key}")
+    @Value("${secret.key}")
     private String secretKey;
     private SecretKey getSignInKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
