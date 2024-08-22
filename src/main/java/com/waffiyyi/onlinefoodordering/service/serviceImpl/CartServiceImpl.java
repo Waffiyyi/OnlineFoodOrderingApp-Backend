@@ -12,11 +12,13 @@ import com.waffiyyi.onlinefoodordering.service.CartService;
 import com.waffiyyi.onlinefoodordering.service.FoodService;
 import com.waffiyyi.onlinefoodordering.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
     private final UserService userService;
@@ -78,8 +80,9 @@ public class CartServiceImpl implements CartService {
         Long total = 0L;
 
         for (CartItem cartItem: cart.getItems()){
-            total+=cartItem.getFood().getPrice() + cartItem.getQuantity();
+            total+=cartItem.getFood().getPrice() * cartItem.getQuantity();
         }
+
         return total;
     }
 

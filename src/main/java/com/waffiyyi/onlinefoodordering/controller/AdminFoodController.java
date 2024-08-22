@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminFoodController {
 
     private final FoodService foodService;
-    private UserService userService;
+    private final UserService userService;
     private final RestaurantService restaurantService;
 
     @PostMapping("/create")

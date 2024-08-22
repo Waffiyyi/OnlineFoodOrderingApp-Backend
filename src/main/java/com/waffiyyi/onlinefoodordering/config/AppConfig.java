@@ -1,13 +1,12 @@
 package com.waffiyyi.onlinefoodordering.config;
 
+import com.waffiyyi.onlinefoodordering.exception.AuthenticationExceptionHandler;
+import com.waffiyyi.onlinefoodordering.exception.SecurityException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.PasswordManagementDsl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -27,6 +26,9 @@ import java.util.Collections;
 @AllArgsConstructor
 public class AppConfig {
     private final JwtTokenValidator jwtTokenValidator;
+    private final AuthenticationExceptionHandler authenticationExceptionHandler;
+    private final SecurityException securityException;
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.sessionManagement(management-> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -34,7 +36,10 @@ public class AppConfig {
                         .requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT_OWNER", "ADMIN")
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
-                ).addFilterBefore(jwtTokenValidator, BasicAuthenticationFilter.class)
+                ).exceptionHandling(request -> {
+                    request.authenticationEntryPoint(authenticationExceptionHandler);
+                    request.accessDeniedHandler(securityException);
+                }).addFilterBefore(jwtTokenValidator, BasicAuthenticationFilter.class)
                 .csrf(csrf-> csrf.disable())
                 .cors(cors->cors.configurationSource(corsConfigurationSource()));
         return http.build();

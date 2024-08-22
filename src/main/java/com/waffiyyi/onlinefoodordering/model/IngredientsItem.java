@@ -24,5 +24,5 @@ public class IngredientsItem {
     @ManyToOne
     private Restaurant restaurant;
 
-    private boolean inStock;
+    private boolean inStock=true;
 }

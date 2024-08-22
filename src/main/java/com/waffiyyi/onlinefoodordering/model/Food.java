@@ -1,5 +1,6 @@
 package com.waffiyyi.onlinefoodordering.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,7 +32,8 @@ public class Food {
     @ElementCollection
     private List<String> images;
 
-    private boolean isAvailable;
+    private boolean isAvailable = true;
+//    @JsonIgnore
     @ManyToOne
     private Restaurant restaurant;
 

@@ -57,7 +57,7 @@ public class OrderServiceImpl implements OrderService {
             OrderItem orderItem = new OrderItem();
 
             orderItem.setFood(cartItem.getFood());
-            orderItem.setIngredients(cartItem.getIngredients());
+            orderItem.setIngredients(new ArrayList<>(cartItem.getIngredients()));
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setTotalPrice(cartItem.getTotalPrice());
 

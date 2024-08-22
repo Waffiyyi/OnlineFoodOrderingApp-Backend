@@ -37,8 +37,8 @@ public class IngredientController {
     }
 
     @GetMapping("/restaurant")
-    public ResponseEntity<List<IngredientsItem>> getRestaurantIngredient(@RequestParam Long ingredientId){
-        List<IngredientsItem> items = ingredientService.findRestaurantIngredients(ingredientId);
+    public ResponseEntity<List<IngredientsItem>> getRestaurantIngredient(@RequestParam Long restaurantId){
+        List<IngredientsItem> items = ingredientService.findRestaurantIngredients(restaurantId);
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
 

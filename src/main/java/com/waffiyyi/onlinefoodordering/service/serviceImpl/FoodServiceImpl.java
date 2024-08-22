@@ -1,16 +1,16 @@
 package com.waffiyyi.onlinefoodordering.service.serviceImpl;
 
 import com.waffiyyi.onlinefoodordering.DTOs.CreateFoodRequest;
+import com.waffiyyi.onlinefoodordering.exception.BadRequestException;
 import com.waffiyyi.onlinefoodordering.exception.ResourceNotFoundException;
-import com.waffiyyi.onlinefoodordering.model.Category;
-import com.waffiyyi.onlinefoodordering.model.Food;
-import com.waffiyyi.onlinefoodordering.model.Restaurant;
-import com.waffiyyi.onlinefoodordering.repository.FoodRepository;
+import com.waffiyyi.onlinefoodordering.model.*;
+import com.waffiyyi.onlinefoodordering.repository.*;
 import com.waffiyyi.onlinefoodordering.service.FoodService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,16 +19,42 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FoodServiceImpl implements FoodService {
     private final FoodRepository foodRepository;
+    private final IngredientItemRepository ingredientItemRepository;
+    private final CategoryRepository categoryRepository;
+    private final IngredientCategoryRepository ingredientCategoryRepository;
     @Override
     public Food createFood(CreateFoodRequest req, Category category, Restaurant restaurant) {
         Food food = new Food();
+//        if(restaurant == null){
+//            throw new BadRequestException("Please input food category", HttpStatus.BAD_REQUEST);
+//        }
+//        if(category == null){
+//            throw new BadRequestException("Please input food category", HttpStatus.BAD_REQUEST);
+//        }
+      Category category1 = categoryRepository.findById(category.getId()).orElseThrow(()-> new ResourceNotFoundException("Category not found", HttpStatus.NOT_FOUND));
 
-        food.setFoodCategory(category);
+        food.setFoodCategory(category1);
         food.setRestaurant(restaurant);
         food.setDescription(req.getDescription());
         food.setImages(req.getImages());
         food.setName(req.getName());
         food.setPrice(req.getPrice());
+        food.setCreationDate(new Date());
+
+        List<IngredientsItem> ingredientItems = req.getIngredientItems();
+
+        if (ingredientItems == null || ingredientItems.isEmpty()) {
+            throw new BadRequestException("Please add the food's ingredient items", HttpStatus.BAD_REQUEST);
+        }
+
+        for (IngredientsItem ingredientItem : ingredientItems) {
+            if (ingredientItem.getCategory() == null || !ingredientCategoryRepository.existsById(ingredientItem.getCategory().getId())) {
+                throw new BadRequestException("Ingredient category with id" + ingredientItem.getCategory().getId() +" does not exist", HttpStatus.BAD_REQUEST);
+            }
+            if (ingredientItem.getId() == null || !ingredientItemRepository.existsById(ingredientItem.getId())) {
+                throw new BadRequestException("Ingredient item with ID " + ingredientItem.getId() + " does not exist", HttpStatus.BAD_REQUEST);
+            }
+        }
         food.setIngredientItems(req.getIngredientItems());
         food.setSeasonal(req.isSeasonal());
         food.setVegetarian(req.isVegetarian());
