@@ -16,29 +16,32 @@ import java.util.List;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class CategoryController {
-    private final CategoryService categoryService;
-    private final UserService userService;
+  private final CategoryService categoryService;
+  private final UserService userService;
 
-    @PostMapping("/admin/category/create")
-    public ResponseEntity<Category> createCategory(@RequestBody Category category,
-                                           @RequestHeader("Authorization") String jwt) {
+  @PostMapping("/admin/category/create")
+  public ResponseEntity<Category> createCategory(@RequestBody Category category,
+                                                 @RequestHeader("Authorization")
+                                                 String jwt) {
 
-        User user = userService.findUserByJWTToken(jwt);
+    User user = userService.findUserByJWTToken(jwt);
 
-        Category createCategory = categoryService.createCategory(category.getName(), user.getId());
+    Category createCategory = categoryService.createCategory(category.getName(),
+        user.getId());
 
-        return new ResponseEntity<>(createCategory, HttpStatus.CREATED);
+    return new ResponseEntity<>(createCategory, HttpStatus.CREATED);
 
-    }
+  }
 
-    @GetMapping("/category/restaurant")
-    public ResponseEntity<List<Category>> getRestaurantCategory(@RequestHeader("Authorization") String jwt) {
+  @GetMapping("/category/restaurant")
+  public ResponseEntity<List<Category>> getRestaurantCategory(
+      @RequestHeader("Authorization") String jwt) {
 
-        User user = userService.findUserByJWTToken(jwt);
+    User user = userService.findUserByJWTToken(jwt);
 
-        List<Category> categories = categoryService.findCategoryByRestaurantId(user.getId());
+    List<Category> categories = categoryService.findCategoryByRestaurantId(user.getId());
 
-        return new ResponseEntity<>(categories, HttpStatus.OK);
+    return new ResponseEntity<>(categories, HttpStatus.OK);
 
-    }
+  }
 }

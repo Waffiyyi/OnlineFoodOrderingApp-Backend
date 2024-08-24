@@ -17,39 +17,40 @@ import java.util.List;
 @RequestMapping("/api/restaurant")
 @RequiredArgsConstructor
 public class RestaurantController {
-    private final RestaurantService restaurantService;
-    private final UserService userService;
-    @GetMapping("/search")
-    public ResponseEntity<List<Restaurant>> searchRestaurant(
-            @RequestParam String keyword
-    ){
-        List<Restaurant> restaurant = restaurantService.searchRestaurant(keyword);
-        return new ResponseEntity<>(restaurant, HttpStatus.OK);
-    }
+  private final RestaurantService restaurantService;
+  private final UserService userService;
 
-    @GetMapping("/get-all")
-    public ResponseEntity<List<Restaurant>> getAllRestaurant(
-    ){
-        List<Restaurant> restaurant = restaurantService.getAllRestaurant();
-        return new ResponseEntity<>(restaurant, HttpStatus.OK);
-    }
+  @GetMapping("/search")
+  public ResponseEntity<List<Restaurant>> searchRestaurant(
+      @RequestParam String keyword
+  ) {
+    List<Restaurant> restaurant = restaurantService.searchRestaurant(keyword);
+    return new ResponseEntity<>(restaurant, HttpStatus.OK);
+  }
 
-    @GetMapping("/get")
-    public ResponseEntity<Restaurant> getRestaurantById(
-            @RequestParam Long restaurantId
-    ) {
-        Restaurant restaurant = restaurantService.findRestaurantById(restaurantId);
-        return new ResponseEntity<>(restaurant, HttpStatus.OK);
-    }
+  @GetMapping("/get-all")
+  public ResponseEntity<List<Restaurant>> getAllRestaurant(
+  ) {
+    List<Restaurant> restaurant = restaurantService.getAllRestaurant();
+    return new ResponseEntity<>(restaurant, HttpStatus.OK);
+  }
 
-    @PutMapping("/add-favourite")
-    public ResponseEntity<RestaurantDTO> addToFavourite(
-            @RequestHeader("Authorization") String jwt,
-            @RequestParam Long restaurantId
-    ){
-        User user = userService.findUserByJWTToken(jwt);
-        RestaurantDTO restaurant = restaurantService.addFavourites(restaurantId, user);
-        return new ResponseEntity<>(restaurant, HttpStatus.OK);
-    }
+  @GetMapping("/get")
+  public ResponseEntity<Restaurant> getRestaurantById(
+      @RequestParam Long restaurantId
+  ) {
+    Restaurant restaurant = restaurantService.findRestaurantById(restaurantId);
+    return new ResponseEntity<>(restaurant, HttpStatus.OK);
+  }
+
+  @PutMapping("/add-favourite")
+  public ResponseEntity<RestaurantDTO> addToFavourite(
+      @RequestHeader("Authorization") String jwt,
+      @RequestParam Long restaurantId
+  ) {
+    User user = userService.findUserByJWTToken(jwt);
+    RestaurantDTO restaurant = restaurantService.addFavourites(restaurantId, user);
+    return new ResponseEntity<>(restaurant, HttpStatus.OK);
+  }
 
 }

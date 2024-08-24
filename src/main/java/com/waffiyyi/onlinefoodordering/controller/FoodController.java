@@ -16,21 +16,24 @@ import java.util.List;
 @RequestMapping("/api/food")
 @RequiredArgsConstructor
 public class FoodController {
-    private final FoodService foodService;
-    @GetMapping("/search-food")
-    public ResponseEntity<List<Food>> searchFood(@RequestParam String keyword) {
+  private final FoodService foodService;
 
-       List<Food> foods = foodService.searchFood(keyword);
-        return new ResponseEntity<>(foods, HttpStatus.OK);
-    }
+  @GetMapping("/search-food")
+  public ResponseEntity<List<Food>> searchFood(@RequestParam String keyword) {
 
-    @GetMapping("/get-foods")
-    public ResponseEntity<List<Food>> getRestaurantFood(@RequestParam boolean vegetarian,
-                                                        @RequestParam boolean seasonal,
-                                                        @RequestParam boolean nonVeg,
-                                                        @RequestParam(required = false) String foodCategory,
-                                                        @RequestParam Long restaurantId){
-        List<Food> foods = foodService.getRestaurantFood(restaurantId, vegetarian, nonVeg, seasonal, foodCategory);
-        return new ResponseEntity<>(foods, HttpStatus.OK);
-    }
+    List<Food> foods = foodService.searchFood(keyword);
+    return new ResponseEntity<>(foods, HttpStatus.OK);
+  }
+
+  @GetMapping("/get-foods")
+  public ResponseEntity<List<Food>> getRestaurantFood(@RequestParam boolean vegetarian,
+                                                      @RequestParam boolean seasonal,
+                                                      @RequestParam boolean nonVeg,
+                                                      @RequestParam(required = false)
+                                                      String foodCategory,
+                                                      @RequestParam Long restaurantId) {
+    List<Food> foods = foodService.getRestaurantFood(restaurantId, vegetarian, nonVeg,
+        seasonal, foodCategory);
+    return new ResponseEntity<>(foods, HttpStatus.OK);
+  }
 }

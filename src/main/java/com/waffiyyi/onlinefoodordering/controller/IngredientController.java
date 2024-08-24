@@ -16,35 +16,45 @@ import java.util.List;
 @RequestMapping("/api/admin/ingredients")
 @RequiredArgsConstructor
 public class IngredientController {
-    private final IngredientService ingredientService;
-    @PostMapping("/create-category")
-    public ResponseEntity<IngredientCategory> createIngredientCategory(@RequestBody IngredientCategoryRequest req){
+  private final IngredientService ingredientService;
 
-        IngredientCategory item = ingredientService.createIngredientCategory(req.getName(), req.getRestaurantId());
-        return new ResponseEntity<>(item, HttpStatus.CREATED);
-    }
+  @PostMapping("/create-category")
+  public ResponseEntity<IngredientCategory> createIngredientCategory(
+      @RequestBody IngredientCategoryRequest req) {
 
-    @PostMapping("/create-item")
-    public ResponseEntity<IngredientsItem> createIngredientItem(@RequestBody IngredientRequest req){
-        IngredientsItem item = ingredientService.createIngredientItem(req.getRestaurantId(), req.getName(), req.getCategoryId());
-        return new ResponseEntity<>(item, HttpStatus.CREATED);
-    }
+    IngredientCategory item = ingredientService.createIngredientCategory(req.getName(),
+        req.getRestaurantId());
+    return new ResponseEntity<>(item, HttpStatus.CREATED);
+  }
 
-    @PutMapping("/update-stock")
-    public ResponseEntity<IngredientsItem> updateIngredientStock(@RequestParam Long ingredientId){
-        IngredientsItem item = ingredientService.updateStock(ingredientId);
-        return new ResponseEntity<>(item, HttpStatus.OK);
-    }
+  @PostMapping("/create-item")
+  public ResponseEntity<IngredientsItem> createIngredientItem(
+      @RequestBody IngredientRequest req) {
+    IngredientsItem item = ingredientService.createIngredientItem(req.getRestaurantId(),
+        req.getName(), req.getCategoryId());
+    return new ResponseEntity<>(item, HttpStatus.CREATED);
+  }
 
-    @GetMapping("/restaurant")
-    public ResponseEntity<List<IngredientsItem>> getRestaurantIngredient(@RequestParam Long restaurantId){
-        List<IngredientsItem> items = ingredientService.findRestaurantIngredients(restaurantId);
-        return new ResponseEntity<>(items, HttpStatus.OK);
-    }
+  @PutMapping("/update-stock")
+  public ResponseEntity<IngredientsItem> updateIngredientStock(
+      @RequestParam Long ingredientId) {
+    IngredientsItem item = ingredientService.updateStock(ingredientId);
+    return new ResponseEntity<>(item, HttpStatus.OK);
+  }
 
-    @GetMapping("/restaurant-category")
-    public ResponseEntity<List<IngredientCategory>> getRestaurantIngredientCategory(@RequestParam Long restaurantId){
-        List<IngredientCategory> items = ingredientService.findIngredientCategoryByRestaurantId(restaurantId);
-        return new ResponseEntity<>(items, HttpStatus.OK);
-    }
+  @GetMapping("/restaurant")
+  public ResponseEntity<List<IngredientsItem>> getRestaurantIngredient(
+      @RequestParam Long restaurantId) {
+    List<IngredientsItem> items = ingredientService.findRestaurantIngredients(
+        restaurantId);
+    return new ResponseEntity<>(items, HttpStatus.OK);
+  }
+
+  @GetMapping("/restaurant-category")
+  public ResponseEntity<List<IngredientCategory>> getRestaurantIngredientCategory(
+      @RequestParam Long restaurantId) {
+    List<IngredientCategory> items = ingredientService.findIngredientCategoryByRestaurantId(
+        restaurantId);
+    return new ResponseEntity<>(items, HttpStatus.OK);
+  }
 }

@@ -24,18 +24,25 @@ public class CartServiceImpl implements CartService {
     private final UserService userService;
     private final CartItemRepository cartItemRepository;
     private final FoodService foodService;
+
     @Override
     public CartItem addItemToCart(AddCartItemRequest req, String jwt) {
-        User user = userService.findUserByJWTToken(jwt);
+        User user = userService.findUserByJWTToken(
+              jwt);
 
-        Food food = foodService.findFoodById(req.getFoodId());
+        Food food = foodService.findFoodById(
+              req.getFoodId());
 
-        Cart cart = cartRepository.findByCustomerId(user.getId());
+        Cart cart = cartRepository.findByCustomerId(
+              user.getId());
 
-        for(CartItem cartItem: cart.getItems()){
-            if(cartItem.getFood().equals(food)){
+        for (CartItem cartItem : cart.getItems()) {
+            if (cartItem.getFood().equals(
+                  food)) {
                 int newQuantity = cartItem.getQuantity() + req.getQuantity();
-                return updateCartItemQuantity(cartItem.getId(), newQuantity);
+                return updateCartItemQuantity(
+                      cartItem.getId(),
+                      newQuantity);
             }
         }
 
@@ -43,15 +50,18 @@ public class CartServiceImpl implements CartService {
 
         newCartItem.setFood(food);
         newCartItem.setCart(cart);
-        newCartItem.setQuantity(req.getQuantity());
-        newCartItem.setIngredients(req.getIngredients());
-        newCartItem.setTotalPrice(req.getQuantity() * food.getPrice());
+        newCartItem.setQuantity(
+              req.getQuantity());
+        newCartItem.setIngredients(
+              req.getIngredients());
+        newCartItem.setTotalPrice(
+              req.getQuantity() * food.getPrice());
 
-        CartItem savedCartItem = cartItemRepository.save(newCartItem);
+        CartItem savedCartItem = cartItemRepository.save(
+              newCartItem);
 
-        cart.getItems().add(savedCartItem);
-
-
+        cart.getItems().add(
+              savedCartItem);
 
 
         return savedCartItem;
@@ -59,28 +69,42 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartItem updateCartItemQuantity(Long cartItemId, int quantity) {
-        CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(()-> new ResourceNotFoundException("Cart item not found", HttpStatus.NOT_FOUND));
+        CartItem cartItem = cartItemRepository.findById(
+              cartItemId).orElseThrow(
+              () -> new ResourceNotFoundException(
+                    "Cart item not found",
+                    HttpStatus.NOT_FOUND));
         cartItem.setQuantity(quantity);
-        cartItem.setTotalPrice(cartItem.getFood().getPrice() * quantity);
-        return cartItemRepository.save(cartItem);
+        cartItem.setTotalPrice(
+              cartItem.getFood().getPrice() * quantity);
+        return cartItemRepository.save(
+              cartItem);
     }
 
     @Override
     public Cart removeItemFromCart(Long cartItemId, String jwt) {
-        User user = userService.findUserByJWTToken(jwt);
-        Cart cart = cartRepository.findByCustomerId(user.getId());
-        CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(()-> new ResourceNotFoundException("Cart item not found", HttpStatus.NOT_FOUND));
+        User user = userService.findUserByJWTToken(
+              jwt);
+        Cart cart = cartRepository.findByCustomerId(
+              user.getId());
+        CartItem cartItem = cartItemRepository.findById(
+              cartItemId).orElseThrow(
+              () -> new ResourceNotFoundException(
+                    "Cart item not found",
+                    HttpStatus.NOT_FOUND));
 
-        cart.getItems().remove(cartItem);
-        return cartRepository.save(cart);
+        cart.getItems().remove(
+              cartItem);
+        return cartRepository.save(
+              cart);
     }
 
     @Override
     public Long calculateCartTotal(Cart cart) {
         Long total = 0L;
 
-        for (CartItem cartItem: cart.getItems()){
-            total+=cartItem.getFood().getPrice() * cartItem.getQuantity();
+        for (CartItem cartItem : cart.getItems()) {
+            total += cartItem.getFood().getPrice() * cartItem.getQuantity();
         }
 
         return total;
@@ -88,21 +112,30 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Cart findCartById(Long id) {
-        return cartRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Cart not found with id " + id, HttpStatus.NOT_FOUND));
+        return cartRepository.findById(
+              id).orElseThrow(
+              () -> new ResourceNotFoundException(
+                    "Cart not found with id " + id,
+                    HttpStatus.NOT_FOUND));
     }
 
     @Override
     public Cart findCartByUserId(Long userId) {
-        Cart cart = cartRepository.findByCustomerId(userId);
-        cart.setTotal(calculateCartTotal(cart));
+        Cart cart = cartRepository.findByCustomerId(
+              userId);
+        cart.setTotal(
+              calculateCartTotal(cart));
         return cart;
     }
 
     @Override
     public Cart clearCart(String jwt) {
-        User user = userService.findUserByJWTToken(jwt);
-        Cart cart = findCartByUserId(user.getId());
+        User user = userService.findUserByJWTToken(
+              jwt);
+        Cart cart = findCartByUserId(
+              user.getId());
         cart.getItems().clear();
-        return cartRepository.save(cart);
+        return cartRepository.save(
+              cart);
     }
 }
