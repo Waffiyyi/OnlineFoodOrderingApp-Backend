@@ -25,15 +25,23 @@ public class FoodController {
     return new ResponseEntity<>(foods, HttpStatus.OK);
   }
 
-  @GetMapping("/get-foods")
-  public ResponseEntity<List<Food>> getRestaurantFood(@RequestParam boolean vegetarian,
-                                                      @RequestParam boolean seasonal,
-                                                      @RequestParam boolean nonVeg,
-                                                      @RequestParam(required = false)
-                                                      String foodCategory,
-                                                      @RequestParam Long restaurantId) {
+  @GetMapping("/get-filter-foods")
+  public ResponseEntity<List<Food>> getRestaurantFood(
+     @RequestParam(required = false) boolean vegetarian,
+     @RequestParam(required = false) boolean seasonal,
+     @RequestParam(required = false) boolean nonVeg,
+     @RequestParam(required = false)
+     String foodCategory,
+     @RequestParam Long restaurantId) {
     List<Food> foods = foodService.getRestaurantFood(restaurantId, vegetarian, nonVeg,
-        seasonal, foodCategory);
+                                                     seasonal, foodCategory);
+    return new ResponseEntity<>(foods, HttpStatus.OK);
+  }
+
+  @GetMapping("/get-foods")
+  public ResponseEntity<List<Food>> getRestaurantFood(
+     @RequestParam Long restaurantId) {
+    List<Food> foods = foodService.getRestaurantMenu(restaurantId);
     return new ResponseEntity<>(foods, HttpStatus.OK);
   }
 }

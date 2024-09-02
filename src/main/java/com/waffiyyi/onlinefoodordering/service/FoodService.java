@@ -8,18 +8,21 @@ import com.waffiyyi.onlinefoodordering.model.Restaurant;
 import java.util.List;
 
 public interface FoodService {
-     Food createFood(CreateFoodRequest req, Category category, Restaurant restaurant);
+  Food createFood(CreateFoodRequest req, Category category, Restaurant restaurant);
 
-     void deleteFood(Long foodId);
+  void deleteFood(Long foodId);
 
-    List<Food> getRestaurantFood(Long restaurantId, boolean isVegetarian, boolean isNonVeg, boolean isSeasonal, String foodCategory);
+  List<Food> getRestaurantFood(Long restaurantId, boolean isVegetarian, boolean isNonVeg,
+                               boolean isSeasonal, String foodCategory);
 
-    List<Food> searchFood(String keyword);
+  List<Food> getRestaurantMenu(Long restaurantId);
 
-    Food findFoodById(Long foodId);
 
-    Food updateAvailability(Long foodId);
+  List<Food> searchFood(String keyword);
 
+  Food findFoodById(Long foodId);
+
+  Food updateAvailability(Long foodId);
 
 
 }

@@ -8,15 +8,16 @@ import java.util.List;
 
 @Data
 public class CreateFoodRequest {
-    private String name;
-    private String description;
-    private Long price;
-    private Category category;
-    private List<String> images;
+  private String name;
+  private String description;
+  private Long price;
+  private Category category;
+  private List<String> images;
 
-    private Long restaurantId;
-    private boolean vegetarian;
-    private boolean seasonal;
+  private Long restaurantId;
+  private boolean vegetarian;
+  private boolean seasonal;
+  private boolean nonveg;
 
-    private List<IngredientsItem> ingredientItems;
+  private List<IngredientsItem> ingredientItems;
 }

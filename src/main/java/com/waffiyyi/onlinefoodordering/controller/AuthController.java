@@ -50,10 +50,11 @@ public class AuthController {
     if (!PasswordValidator.isValid(user.getPassword())) {
       throw new BadRequestException("Invalid password format", HttpStatus.BAD_REQUEST);
     }
+
     User isEmailExist = userRepository.findByEmail(user.getEmail());
     if (isEmailExist != null) {
       throw new BadRequestException("Email is already used with another account",
-          HttpStatus.BAD_REQUEST);
+                                    HttpStatus.BAD_REQUEST);
     }
 
     User createdUser = new User();
@@ -68,20 +69,24 @@ public class AuthController {
     cart.setCustomer(savedUser);
     cartRepository.save(cart);
 
+    // Load UserDetails to populate the Authentication object
+    UserDetails userDetails = customUserDetailsService.loadUserByUsername(
+       savedUser.getEmail());
+
     Authentication authentication = new UsernamePasswordAuthenticationToken(
-        user.getEmail(), user.getPassword());
+       userDetails, null, userDetails.getAuthorities());
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     String jwt = jwtProvider.generateToken(authentication);
 
     AuthResponse response = AuthResponse.builder()
-                                        .jwt(jwt)
-                                        .message("Register success")
-                                        .role(savedUser.getRole())
-                                        .build();
+                               .jwt(jwt)
+                               .message("Register success")
+                               .role(savedUser.getRole())
+                               .build();
+
     return new ResponseEntity<>(response, HttpStatus.CREATED);
   }
-
 
   @PostMapping("/signIn")
   public ResponseEntity<AuthResponse> signIn(@RequestBody LoginRequestDTO req) {
@@ -94,13 +99,14 @@ public class AuthController {
 
     Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
-    String role = authorities.isEmpty() ? null : authorities.iterator().next().getAuthority();
+    String role =
+       authorities.isEmpty() ? null : authorities.iterator().next().getAuthority();
 
     AuthResponse response = AuthResponse.builder()
-                                        .jwt(jwt)
-                                        .message("Login success")
-                                        .role(USER_ROLE.valueOf(role))
-                                        .build();
+                               .jwt(jwt)
+                               .message("Login success")
+                               .role(USER_ROLE.valueOf(role))
+                               .build();
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
@@ -114,6 +120,6 @@ public class AuthController {
       throw new BadCredentialsException("Invalid password....");
     }
     return new UsernamePasswordAuthenticationToken(userDetails, null,
-        userDetails.getAuthorities());
+                                                   userDetails.getAuthorities());
   }
 }
