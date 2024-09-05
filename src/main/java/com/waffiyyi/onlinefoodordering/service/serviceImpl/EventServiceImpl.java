@@ -9,6 +9,7 @@ import com.waffiyyi.onlinefoodordering.repository.EventRepository;
 import com.waffiyyi.onlinefoodordering.repository.RestaurantRepository;
 import com.waffiyyi.onlinefoodordering.service.EventService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -18,25 +19,37 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EventServiceImpl implements EventService {
   private final EventRepository eventRepository;
   private final RestaurantRepository restaurantRepository;
 
   @Override
-  public EventDTO createEvent(EventDTO createEventDTO) {
+  public EventDTO createEvent(EventDTO createEventDTO, Long restaurantId) {
     if (createEventDTO.getEventName() == null || createEventDTO.getLocation() == null
            || createEventDTO.getStartDateTime() == null || createEventDTO.getEndDateTime() == null) {
       throw new BadRequestException("One or more required field is null",
                                     HttpStatus.BAD_REQUEST);
     }
-    if (createEventDTO.getStartDateTime().isBefore(LocalDateTime.now())) {
-      throw new BadRequestException("Start date time cannot be in the past",
+
+
+    if (createEventDTO.getStartDateTime().isBefore(
+       LocalDateTime.now()) || createEventDTO.getEndDateTime().isBefore(
+       LocalDateTime.now())) {
+      throw new BadRequestException("The date cannot be in the past",
+                                    HttpStatus.BAD_REQUEST);
+    }
+    if (createEventDTO.getStartDateTime().isAfter(createEventDTO.getEndDateTime())) {
+      throw new BadRequestException("The end date cannot be in the past",
                                     HttpStatus.BAD_REQUEST);
     }
 
-    restaurantRepository.findById(createEventDTO.getRestaurantId()).orElseThrow(
-       () -> new ResourceNotFoundException("Restaurant not found",
-                                           HttpStatus.BAD_REQUEST));
+    Restaurant restaurant =
+       restaurantRepository.findById(restaurantId).orElseThrow(
+          () -> new ResourceNotFoundException("Restaurant not found",
+                                              HttpStatus.BAD_REQUEST));
+
+    log.info(createEventDTO.getRestaurantId() + "restaurant id");
 
     Event event = Event.builder()
                      .eventName(createEventDTO.getEventName())
@@ -44,6 +57,7 @@ public class EventServiceImpl implements EventService {
                      .image(createEventDTO.getImage())
                      .startDateTime(createEventDTO.getStartDateTime())
                      .endDateTime(createEventDTO.getEndDateTime())
+                     .restaurant(restaurant)
                      .build();
     Event savedEvent = eventRepository.save(event);
     return convertToEventResponse(savedEvent);
@@ -83,6 +97,7 @@ public class EventServiceImpl implements EventService {
   private EventDTO convertToEventResponse(Event event) {
     return EventDTO.builder()
               .id(event.getId())
+              .restaurantId(event.getRestaurant().getId())
               .eventName(event.getEventName())
               .image(event.getImage())
               .location(event.getLocation())

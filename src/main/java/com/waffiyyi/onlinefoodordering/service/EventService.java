@@ -5,7 +5,7 @@ import com.waffiyyi.onlinefoodordering.DTOs.EventDTO;
 import java.util.List;
 
 public interface EventService {
-  EventDTO createEvent(EventDTO createEventDTO);
+  EventDTO createEvent(EventDTO createEventDTO, Long restaurantId);
 
   List<EventDTO> getAllRestaurantEvent(Long restaurantId);
 
