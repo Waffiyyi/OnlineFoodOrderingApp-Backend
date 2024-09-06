@@ -8,14 +8,17 @@ import com.waffiyyi.onlinefoodordering.model.User;
 import java.util.List;
 
 public interface OrderService {
-    Order createOrder(OrderRequest order, User user);
+  Order createOrder(OrderRequest order, User user);
 
-    Order updateOrder(Long orderId, ORDER_STATUS orderStatus);
+  Order updateOrder(Long orderId, ORDER_STATUS orderStatus);
 
-    void cancelOrder(Long orderId);
+  void cancelOrder(Long orderId);
 
-    List<Order> getUsersOrder(Long userId);
+  List<Order> getUsersOrder(Long userId);
 
-    List<Order> getRestaurantsOrder(Long restaurantId, ORDER_STATUS orderStatus);
-    Order findOrderById(Long id);
+  List<Order> getRestaurantsOrderByStatus(Long restaurantId, ORDER_STATUS orderStatus);
+
+  List<Order> getRestaurantsOrder(Long restaurantId);
+
+  Order findOrderById(Long id);
 }

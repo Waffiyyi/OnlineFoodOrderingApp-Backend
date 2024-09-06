@@ -7,11 +7,11 @@ import org.springframework.security.core.AuthenticationException;
 @Getter
 @Setter
 public class CustomAuthenticationException extends AuthenticationException {
-    public CustomAuthenticationException(String msg) {
-        super(msg);
-    }
+  public CustomAuthenticationException(String msg) {
+    super("Authentication failed. Please check your credentials and try again.");
+  }
 
-    public CustomAuthenticationException(String msg, Throwable t) {
-        super(msg, t);
-    }
+  public CustomAuthenticationException(String msg, Throwable t) {
+    super(msg, t);
+  }
 }

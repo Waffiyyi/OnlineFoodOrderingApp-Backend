@@ -56,7 +56,11 @@ public class AuthController {
       throw new BadRequestException("Email is already used with another account",
                                     HttpStatus.BAD_REQUEST);
     }
+    if (user.getFullName() == null) {
+      throw new BadRequestException("Please enter your full name",
+                                    HttpStatus.BAD_REQUEST);
 
+    }
     User createdUser = new User();
     createdUser.setEmail(user.getEmail());
     createdUser.setFullName(user.getFullName());
@@ -69,7 +73,6 @@ public class AuthController {
     cart.setCustomer(savedUser);
     cartRepository.save(cart);
 
-    // Load UserDetails to populate the Authentication object
     UserDetails userDetails = customUserDetailsService.loadUserByUsername(
        savedUser.getEmail());
 
