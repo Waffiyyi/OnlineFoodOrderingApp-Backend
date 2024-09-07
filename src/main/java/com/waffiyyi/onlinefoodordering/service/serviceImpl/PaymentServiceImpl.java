@@ -5,18 +5,24 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import com.waffiyyi.onlinefoodordering.DTOs.PaymentResponse;
+import com.waffiyyi.onlinefoodordering.enums.ORDER_STATUS;
+import com.waffiyyi.onlinefoodordering.exception.BadRequestException;
 import com.waffiyyi.onlinefoodordering.model.Order;
+import com.waffiyyi.onlinefoodordering.repository.OrderRepository;
 import com.waffiyyi.onlinefoodordering.service.PaymentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
+  private final OrderRepository orderRepository;
   @Value("${stripe.secret.key}")
   private String stripeSecretKey;
   @Value("${app.redirect.success}")
   private String successURL;
-
   @Value("${app.redirect.fail}")
   private String cancelURL;
 
@@ -24,6 +30,10 @@ public class PaymentServiceImpl implements PaymentService {
   public PaymentResponse createPaymentLink(Order order)
      throws StripeException {
     Stripe.apiKey = stripeSecretKey;
+
+
+    long unitAmount = (long) order.getTotalPrice() * 100;
+
 
     SessionCreateParams params =
        SessionCreateParams.builder()
@@ -40,11 +50,11 @@ public class PaymentServiceImpl implements PaymentService {
                    .setCurrency(
                       "ngn")
                    .setUnitAmount(
-                      (long) order.getTotalPrice() * 100)
+                      unitAmount)
                    .setProductData(
                       SessionCreateParams.LineItem.PriceData.ProductData.builder()
                          .setName(
-                            "Demure Deliveries")
+                            "CraveCourier")
                          .build()
                    ).build()
              ).build()
@@ -54,7 +64,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     PaymentResponse response = new PaymentResponse();
     response.setPayment_url(session.getUrl());
-
+    order.setOrderStatus(ORDER_STATUS.COMPLETED);
+    orderRepository.save(order);
     return response;
   }
 }

@@ -17,15 +17,15 @@ import java.util.List;
 public class AdminOrderController {
   private final OrderService orderService;
 
-  @GetMapping("/order/restaurant/get-history-from-status")
-  public ResponseEntity<List<Order>> getOrderHistoryByStatus(
+  @GetMapping("/order/restaurant/get-history")
+  public ResponseEntity<List<Order>> getOrderHistory(
      @RequestParam Long restaurantId) {
     List<Order> orders = orderService.getRestaurantsOrder(restaurantId);
     return new ResponseEntity<>(orders, HttpStatus.OK);
   }
 
-  @GetMapping("/order/restaurant/get-history")
-  public ResponseEntity<List<Order>> getOrderHistory(
+  @GetMapping("/order/restaurant/get-history-from-status")
+  public ResponseEntity<List<Order>> getOrderHistoryByStatus(
      @RequestParam Long restaurantId,
      @RequestParam(required = false) ORDER_STATUS orderStatus) {
     List<Order> orders = orderService.getRestaurantsOrderByStatus(restaurantId,

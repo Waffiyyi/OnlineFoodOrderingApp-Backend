@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,11 +36,28 @@ public class OrderServiceImpl implements OrderService {
   @Override
   public Order createOrder(OrderRequest order, User user) {
     Address deliveryAddress = order.getDeliveryAddress();
-    Address savedAddress = addressRepository.save(deliveryAddress);
+    List<Address> existingAddresses =
+       addressRepository.findAllByCityAndStateProvinceAndPostalCodeAndStreetAddress(
+          deliveryAddress.getCity(),
+          deliveryAddress.getStateProvince(),
+          deliveryAddress.getPostalCode(),
+          deliveryAddress.getStreetAddress()
+       );
+
+
+    Address savedAddress;
+    if (!existingAddresses.isEmpty()) {
+      savedAddress = existingAddresses.get(0);
+    } else {
+      savedAddress = addressRepository.save(deliveryAddress);
+    }
+
+
     if (!user.getAddresses().contains(savedAddress)) {
       user.getAddresses().add(savedAddress);
       userRepository.save(user);
     }
+
     Restaurant restaurant = restaurantService.findRestaurantById(order.getRestaurantId());
 
     Order createdOrder = new Order();

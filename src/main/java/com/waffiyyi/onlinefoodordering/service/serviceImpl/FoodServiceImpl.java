@@ -27,12 +27,16 @@ public class FoodServiceImpl implements FoodService {
   public Food createFood(CreateFoodRequest req, Category category,
                          Restaurant restaurant) {
     Food food = new Food();
-    //        if(restaurant == null){
-    //            throw new BadRequestException("Please input food category", HttpStatus.BAD_REQUEST);
-    //        }
-    //        if(category == null){
-    //            throw new BadRequestException("Please input food category", HttpStatus.BAD_REQUEST);
-    //        }
+
+    Long payAbleAmount = 803L;
+
+    if (req.getPrice() < payAbleAmount) {
+      throw new BadRequestException("Menu price, even with discounts, must be greater " +
+                                       "than or equal to " +
+                                       "50" +
+                                       " cents",
+                                    HttpStatus.BAD_REQUEST);
+    }
     Category category1 = categoryRepository.findById(category.getId()).orElseThrow(
        () -> new ResourceNotFoundException("Category not found", HttpStatus.NOT_FOUND));
 

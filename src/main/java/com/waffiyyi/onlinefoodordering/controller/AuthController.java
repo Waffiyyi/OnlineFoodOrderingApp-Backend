@@ -50,6 +50,10 @@ public class AuthController {
     if (!PasswordValidator.isValid(user.getPassword())) {
       throw new BadRequestException("Invalid password format", HttpStatus.BAD_REQUEST);
     }
+    if (user.getFullName() == null) {
+      throw new BadRequestException("Please input your full name",
+                                    HttpStatus.BAD_REQUEST);
+    }
 
     User isEmailExist = userRepository.findByEmail(user.getEmail());
     if (isEmailExist != null) {

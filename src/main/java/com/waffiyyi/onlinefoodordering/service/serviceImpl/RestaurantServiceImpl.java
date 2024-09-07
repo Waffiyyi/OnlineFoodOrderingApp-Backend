@@ -51,7 +51,29 @@ public class RestaurantServiceImpl implements RestaurantService {
     Restaurant restaurant = findRestaurantById(restaurantId);
 
     if (updateRestaurant.getAddress() != null) {
-      restaurant.setAddress(updateRestaurant.getAddress());
+      Address currentAddress = restaurant.getAddress();
+      Address updatedAddress = updateRestaurant.getAddress();
+
+      if (currentAddress != null) {
+        if (updatedAddress.getCountry() != null) {
+          currentAddress.setCountry(updatedAddress.getCountry());
+        }
+        if (updatedAddress.getCity() != null) {
+          currentAddress.setCity(updatedAddress.getCity());
+        }
+        if (updatedAddress.getPostalCode() != null) {
+          currentAddress.setPostalCode(updatedAddress.getPostalCode());
+        }
+        if (updatedAddress.getStateProvince() != null) {
+          currentAddress.setStateProvince(updatedAddress.getStateProvince());
+        }
+        log.info("state province" + updatedAddress.getStateProvince());
+        if (updatedAddress.getStreetAddress() != null) {
+          currentAddress.setStreetAddress(updatedAddress.getStreetAddress());
+        }
+      } else {
+        restaurant.setAddress(updatedAddress);
+      }
     }
 
     if (updateRestaurant.getContactInformation() != null) {
@@ -67,7 +89,15 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     if (updateRestaurant.getImages() != null) {
-      restaurant.setImages(updateRestaurant.getImages());
+      List<String> currentImages = restaurant.getImages();
+      List<String> newImages = updateRestaurant.getImages();
+
+      for (String image : newImages) {
+        if (!currentImages.contains(image)) {
+          currentImages.add(image);
+        }
+      }
+      currentImages.removeIf(image -> !newImages.contains(image));
     }
 
     if (updateRestaurant.getRestaurantName() != null) {

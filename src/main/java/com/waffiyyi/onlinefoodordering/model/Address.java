@@ -13,17 +13,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Address {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long Id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long Id;
 
-    private String streetAddress;
+  private String streetAddress;
 
-    private String city;
+  private String city;
 
-    private String stateProvince;
+  private String stateProvince;
 
-    private String postalCode;
+  private String postalCode;
 
-    private String country;
+  private String country;
+
+  private String place;
 }
