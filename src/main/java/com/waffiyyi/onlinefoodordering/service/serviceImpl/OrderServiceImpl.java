@@ -34,8 +34,18 @@ public class OrderServiceImpl implements OrderService {
   private final CartService cartService;
 
   @Override
-  public Order createOrder(OrderRequest order, User user) {
-    Address deliveryAddress = order.getDeliveryAddress();
+  public Order createOrder(OrderRequest order, User user, Long addressId) {
+    Address selectedAddress =
+       addressRepository.findById(addressId).orElseThrow(
+          () -> new ResourceNotFoundException("Address not found", HttpStatus.NOT_FOUND));
+
+
+    Address deliveryAddress = new Address();
+
+    if (order.getDeliveryAddress() != null) {
+      deliveryAddress = order.getDeliveryAddress();
+    }
+
     List<Address> existingAddresses =
        addressRepository.findAllByCityAndStateProvinceAndPostalCodeAndStreetAddress(
           deliveryAddress.getCity(),
@@ -46,7 +56,9 @@ public class OrderServiceImpl implements OrderService {
 
 
     Address savedAddress;
-    if (!existingAddresses.isEmpty()) {
+    if (selectedAddress != null) {
+      savedAddress = selectedAddress;
+    } else if (!existingAddresses.isEmpty()) {
       savedAddress = existingAddresses.get(0);
     } else {
       savedAddress = addressRepository.save(deliveryAddress);
@@ -65,7 +77,12 @@ public class OrderServiceImpl implements OrderService {
     createdOrder.setCustomer(user);
     createdOrder.setCreatedAt(new Date());
     createdOrder.setOrderStatus(ORDER_STATUS.PENDING);
-    createdOrder.setDeliveryAddress(savedAddress);
+    if (selectedAddress != null) {
+      createdOrder.setDeliveryAddress(selectedAddress);
+    } else {
+      createdOrder.setDeliveryAddress(savedAddress);
+    }
+
     createdOrder.setRestaurant(restaurant);
 
     Cart cart = cartService.findCartByUserId(user.getId());

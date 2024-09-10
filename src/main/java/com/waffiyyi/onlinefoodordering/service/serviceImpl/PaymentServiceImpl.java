@@ -5,14 +5,11 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import com.waffiyyi.onlinefoodordering.DTOs.PaymentResponse;
-import com.waffiyyi.onlinefoodordering.enums.ORDER_STATUS;
-import com.waffiyyi.onlinefoodordering.exception.BadRequestException;
 import com.waffiyyi.onlinefoodordering.model.Order;
 import com.waffiyyi.onlinefoodordering.repository.OrderRepository;
 import com.waffiyyi.onlinefoodordering.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -43,6 +40,7 @@ public class PaymentServiceImpl implements PaymentService {
              SessionCreateParams.Mode.PAYMENT)
           .setSuccessUrl(successURL + order.getId())
           .setCancelUrl(cancelURL)
+          .setClientReferenceId(String.valueOf(order.getId()))
           .addLineItem(
              SessionCreateParams.LineItem.builder().setQuantity(
                 1L).setPriceData(
@@ -64,8 +62,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     PaymentResponse response = new PaymentResponse();
     response.setPayment_url(session.getUrl());
-    order.setOrderStatus(ORDER_STATUS.COMPLETED);
-    orderRepository.save(order);
     return response;
   }
 }

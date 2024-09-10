@@ -8,7 +8,7 @@ import com.waffiyyi.onlinefoodordering.model.User;
 import java.util.List;
 
 public interface OrderService {
-  Order createOrder(OrderRequest order, User user);
+  Order createOrder(OrderRequest order, User user, Long addressId);
 
   Order updateOrder(Long orderId, ORDER_STATUS orderStatus);
 

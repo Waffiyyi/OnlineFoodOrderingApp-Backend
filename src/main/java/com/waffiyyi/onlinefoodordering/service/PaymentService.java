@@ -5,6 +5,6 @@ import com.waffiyyi.onlinefoodordering.DTOs.PaymentResponse;
 import com.waffiyyi.onlinefoodordering.model.Order;
 
 public interface PaymentService {
-  public PaymentResponse createPaymentLink(Order order)
-      throws StripeException;
+  PaymentResponse createPaymentLink(Order order)
+     throws StripeException;
 }
