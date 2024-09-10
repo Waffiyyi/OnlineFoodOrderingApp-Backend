@@ -36,9 +36,12 @@ public class OrderServiceImpl implements OrderService {
   @Override
   public Order createOrder(OrderRequest order, User user, Long addressId) {
     Address selectedAddress =
-       addressRepository.findById(addressId).orElseThrow(
-          () -> new ResourceNotFoundException("Address not found", HttpStatus.NOT_FOUND));
+       addressRepository.findById(addressId).orElse(null);
+    if (selectedAddress == null && order.getDeliveryAddress() == null) {
+      throw new BadRequestException("You have to select an existing address or enter a " +
+                                       "new address", HttpStatus.BAD_REQUEST);
 
+    }
 
     Address deliveryAddress = new Address();
 
