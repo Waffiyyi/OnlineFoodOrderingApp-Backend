@@ -14,6 +14,7 @@ import com.waffiyyi.onlinefoodordering.service.OrderService;
 import com.waffiyyi.onlinefoodordering.service.RestaurantService;
 import com.waffiyyi.onlinefoodordering.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderServiceImpl implements OrderService {
   private final OrderRepository orderRepository;
   private final OrderItemRepository orderItemRepository;
@@ -35,8 +37,12 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   public Order createOrder(OrderRequest order, User user, Long addressId) {
-    Address selectedAddress =
-       addressRepository.findById(addressId).orElse(null);
+    Address selectedAddress = null;
+    if (addressId != null) {
+      selectedAddress =
+         addressRepository.findById(addressId).orElse(null);
+    }
+
     if (selectedAddress == null && order.getDeliveryAddress() == null) {
       throw new BadRequestException("You have to select an existing address or enter a " +
                                        "new address", HttpStatus.BAD_REQUEST);
@@ -48,13 +54,15 @@ public class OrderServiceImpl implements OrderService {
     if (order.getDeliveryAddress() != null) {
       deliveryAddress = order.getDeliveryAddress();
     }
+    log.info("DELIVERY PLACE" + deliveryAddress.getPlace());
 
     List<Address> existingAddresses =
-       addressRepository.findAllByCityAndStateProvinceAndPostalCodeAndStreetAddress(
+       addressRepository.findAllByCityAndStateProvinceAndPostalCodeAndStreetAddressAndPlace(
           deliveryAddress.getCity(),
           deliveryAddress.getStateProvince(),
           deliveryAddress.getPostalCode(),
-          deliveryAddress.getStreetAddress()
+          deliveryAddress.getStreetAddress(),
+          deliveryAddress.getPlace()
        );
 
 
