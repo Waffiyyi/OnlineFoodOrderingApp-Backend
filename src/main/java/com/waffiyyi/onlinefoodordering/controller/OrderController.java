@@ -27,7 +27,8 @@ public class OrderController {
 
   @PostMapping("/order/create")
   public ResponseEntity<PaymentResponse> createOrder(@RequestBody OrderRequest req,
-                                                     @RequestParam Long addressId,
+                                                     @RequestParam(required = false)
+                                                     Long addressId,
                                                      @RequestHeader("Authorization")
                                                      String jwt) throws StripeException {
     User user = userService.findUserByJWTToken(jwt);
