@@ -8,6 +8,7 @@ import com.waffiyyi.onlinefoodordering.enums.ORDER_STATUS;
 import com.waffiyyi.onlinefoodordering.model.Order;
 import com.waffiyyi.onlinefoodordering.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/stripe/webhook")
 @RequiredArgsConstructor
+@Slf4j
 public class StripeWebhookController {
 
   private final OrderRepository orderRepository;
@@ -29,6 +31,7 @@ public class StripeWebhookController {
                                                   String sigHeader) {
     String endpointSecret = signingKey;
     Event event = null;
+    log.info("webhook initiated");
 
     try {
       event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
@@ -37,6 +40,7 @@ public class StripeWebhookController {
     }
 
     if ("checkout.session.completed".equals(event.getType())) {
+      log.info("session complted triggered");
       Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(
          null);
       if (session != null) {
@@ -49,19 +53,24 @@ public class StripeWebhookController {
           order.setOrderStatus(ORDER_STATUS.COMPLETED);
           orderRepository.save(order);
         }
+        log.info("order status" + order.getOrderStatus());
       }
     } else if ("checkout.session.expired".equals(event.getType())) {
+      log.info("session expired triggered");
+
       // Handle payment failure case
       Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(
          null);
       if (session != null) {
         Long orderId = Long.valueOf(session.getClientReferenceId());
         Order order = orderRepository.findById(orderId).orElse(null);
-
         if (order != null) {
+          log.info("order status" + order.getOrderStatus());
           order.setOrderStatus(ORDER_STATUS.CANCELED);
           orderRepository.save(order);
         }
+        log.info("order status" + order.getOrderStatus());
+
       }
     }
 
