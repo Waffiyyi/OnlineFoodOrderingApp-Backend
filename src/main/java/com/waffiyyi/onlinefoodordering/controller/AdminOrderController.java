@@ -12,19 +12,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class AdminOrderController {
   private final OrderService orderService;
 
-  @GetMapping("/order/restaurant/get-history")
+  @GetMapping("/admin/order/restaurant/get-history")
   public ResponseEntity<List<Order>> getOrderHistory(
      @RequestParam Long restaurantId) {
     List<Order> orders = orderService.getRestaurantsOrder(restaurantId);
     return new ResponseEntity<>(orders, HttpStatus.OK);
   }
 
-  @GetMapping("/order/restaurant/get-history-from-status")
+  @GetMapping("/admin/order/restaurant/get-history-from-status")
   public ResponseEntity<List<Order>> getOrderHistoryByStatus(
      @RequestParam Long restaurantId,
      @RequestParam(required = false) ORDER_STATUS orderStatus) {

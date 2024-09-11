@@ -127,7 +127,8 @@ public class OrderServiceImpl implements OrderService {
     if (orderStatus.equals(ORDER_STATUS.PENDING) ||
            orderStatus.equals(ORDER_STATUS.OUT_FOR_DELIVERY) ||
            orderStatus.equals(ORDER_STATUS.DELIVERED) ||
-           orderStatus.equals(ORDER_STATUS.COMPLETED)
+           orderStatus.equals(ORDER_STATUS.PAYMENT_COMPLETED)
+           || orderStatus.equals(ORDER_STATUS.PAYMENT_CANCELED)
     ) {
       order.setOrderStatus(orderStatus);
       return orderRepository.save(order);
