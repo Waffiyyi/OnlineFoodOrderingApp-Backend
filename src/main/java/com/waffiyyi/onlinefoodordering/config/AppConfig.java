@@ -57,6 +57,7 @@ public class AppConfig {
            Arrays.asList(
               "https://",
               "http://localhost:5173",
+              "http://localhost:3000",
               "https://crave-courier.vercel.app"
            )
         );

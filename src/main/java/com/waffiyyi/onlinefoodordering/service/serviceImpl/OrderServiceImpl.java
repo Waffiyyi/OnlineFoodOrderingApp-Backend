@@ -54,7 +54,6 @@ public class OrderServiceImpl implements OrderService {
     if (order.getDeliveryAddress() != null) {
       deliveryAddress = order.getDeliveryAddress();
     }
-    log.info("DELIVERY PLACE" + deliveryAddress.getPlace());
 
     List<Address> existingAddresses =
        addressRepository.findAllByCityAndStateProvinceAndPostalCodeAndStreetAddressAndPlace(
