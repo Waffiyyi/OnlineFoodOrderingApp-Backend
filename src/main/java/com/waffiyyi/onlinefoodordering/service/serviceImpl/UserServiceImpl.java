@@ -82,7 +82,6 @@ public class UserServiceImpl implements UserService {
   }
 
   public String resetPassword(ResetPassDTO resetPassDTO) throws NoSuchAlgorithmException {
-    log.info("rsstssttss" + resetPassDTO.getResetToken());
     String hash = OTPUtility.generateHash(resetPassDTO.getResetToken());
 
     Optional<ResetRequest> resetRequestOptional = resetPasswordRepo.findByResetToken(
@@ -100,8 +99,10 @@ public class UserServiceImpl implements UserService {
         throw new BadRequestException("Passwords do not match", HttpStatus.BAD_REQUEST);
       }
       if (!PasswordValidator.isValid(resetPassDTO.getNewPassword())) {
-        throw new BadRequestException("Invalid password format",
-                                      HttpStatus.BAD_REQUEST);
+        throw new BadRequestException(
+           "Invalid password format, password must include at " +
+              "least one uppercase letter, one lowercase letter, and one digit ",
+           HttpStatus.BAD_REQUEST);
       }
       user.setPassword(passwordEncoder.encode(resetPassDTO.getNewPassword()));
       userRepository.save(user);
