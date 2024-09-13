@@ -15,34 +15,34 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Food {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long Id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long Id;
 
-    private String name;
+  private String name;
 
-    private String description;
+  private String description;
 
-    private Long price;
+  private Long price;
 
-    @ManyToOne
-    private Category foodCategory;
+  @ManyToOne
+  @JsonIgnore
+  private Category foodCategory;
 
-    @Column(length = 1000)
-    @ElementCollection
-    private List<String> images;
+  @Column(length = 1000)
+  @ElementCollection
+  private List<String> images;
 
-    private boolean isAvailable = true;
-//    @JsonIgnore
-    @ManyToOne
-    private Restaurant restaurant;
+  private boolean isAvailable = true;
+  @ManyToOne
+  private Restaurant restaurant;
 
-    private boolean isVegetarian;
+  private boolean isVegetarian;
 
-    private boolean isSeasonal;
+  private boolean isSeasonal;
 
-    @ManyToMany
-    private List<IngredientsItem> ingredientItems = new ArrayList<>();
+  @ManyToMany
+  private List<IngredientsItem> ingredientItems = new ArrayList<>();
 
-    private Date creationDate;
+  private Date creationDate;
 }

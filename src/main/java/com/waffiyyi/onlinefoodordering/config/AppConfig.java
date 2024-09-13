@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,20 +32,21 @@ public class AppConfig {
 
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.sessionManagement(
-          management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-       .authorizeHttpRequests(Authorize -> Authorize
-                                              .requestMatchers(
-                                                 "/api/admin/**").hasAnyRole(
-             "RESTAURANT_OWNER", "ADMIN")
-                                              .requestMatchers("/api/**").authenticated()
-                                              .anyRequest().permitAll()
-       ).exceptionHandling(request -> {
+    http.sessionManagement(management -> management.sessionCreationPolicy(
+       SessionCreationPolicy.STATELESS)).authorizeHttpRequests(
+       Authorize -> Authorize
+                       .requestMatchers(HttpMethod.POST,
+                                        "/auth/**").permitAll()
+                       .requestMatchers(
+                          "/api/admin/**").hasAnyRole("RESTAURANT_OWNER",
+                                                      "ADMIN").requestMatchers(
+             "/api/**").authenticated().anyRequest().authenticated()).exceptionHandling(
+       request -> {
          request.authenticationEntryPoint(authenticationExceptionHandler);
          request.accessDeniedHandler(securityException);
-       }).addFilterBefore(jwtTokenValidator, BasicAuthenticationFilter.class)
-       .csrf(csrf -> csrf.disable())
-       .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+       }).addFilterBefore(jwtTokenValidator, BasicAuthenticationFilter.class).csrf(
+       csrf -> csrf.disable()).cors(
+       cors -> cors.configurationSource(corsConfigurationSource()));
     return http.build();
   }
 
@@ -54,12 +56,8 @@ public class AppConfig {
       public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
         CorsConfiguration cfg = new CorsConfiguration();
         cfg.setAllowedOrigins(
-           Arrays.asList(
-              "http://localhost:5173",
-              "http://localhost:3000",
-              "https://crave-courier.vercel.app"
-           )
-        );
+           Arrays.asList("http://localhost:5173", "http://localhost:3000",
+                         "https://crave-courier.vercel.app"));
         cfg.setAllowedMethods(Collections.singletonList("*"));
         cfg.setAllowCredentials(true);
         cfg.setAllowedHeaders(Collections.singletonList("*"));

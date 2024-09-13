@@ -1,6 +1,7 @@
 package com.waffiyyi.onlinefoodordering.controller;
 
 import com.waffiyyi.onlinefoodordering.DTOs.LoginRequestDTO;
+import com.waffiyyi.onlinefoodordering.DTOs.ResetPassDTO;
 import com.waffiyyi.onlinefoodordering.config.JwtProvider;
 import com.waffiyyi.onlinefoodordering.enums.USER_ROLE;
 import com.waffiyyi.onlinefoodordering.exception.BadRequestException;
@@ -11,6 +12,7 @@ import com.waffiyyi.onlinefoodordering.repository.CartRepository;
 import com.waffiyyi.onlinefoodordering.repository.UserRepository;
 import com.waffiyyi.onlinefoodordering.respose.AuthResponse;
 import com.waffiyyi.onlinefoodordering.service.CustomUserDetailsService;
+import com.waffiyyi.onlinefoodordering.service.UserService;
 import com.waffiyyi.onlinefoodordering.validations.EmailValidator;
 import com.waffiyyi.onlinefoodordering.validations.PasswordValidator;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +25,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -40,6 +40,7 @@ public class AuthController {
   private final JwtProvider jwtProvider;
   private final CustomUserDetailsService customUserDetailsService;
   private final CartRepository cartRepository;
+  private final UserService userService;
 
   @PostMapping("/signup")
   public ResponseEntity<AuthResponse> createUserHandler(@RequestBody User user) {
@@ -48,7 +49,9 @@ public class AuthController {
     }
 
     if (!PasswordValidator.isValid(user.getPassword())) {
-      throw new BadRequestException("Invalid password format", HttpStatus.BAD_REQUEST);
+      throw new BadRequestException("Invalid password format, password must include at " +
+                                       "least one uppercase letter, one lowercase letter, and one digit ",
+                                    HttpStatus.BAD_REQUEST);
     }
     if (user.getFullName() == null) {
       throw new BadRequestException("Please input your full name",
@@ -128,5 +131,25 @@ public class AuthController {
     }
     return new UsernamePasswordAuthenticationToken(userDetails, null,
                                                    userDetails.getAuthorities());
+  }
+
+
+  @PostMapping("/initiate-password-request")
+  public ResponseEntity<String> initiatePasscodeRequest(@RequestParam String email) throws
+                                                                                    NoSuchAlgorithmException {
+    userService.initiateResetRequest(email, "passcode");
+    return ResponseEntity.ok().body(
+       "Instructions of how to reset your passcode has been sent to your email");
+  }
+
+  @PostMapping("/reset-password")
+  public ResponseEntity<String> resetPassword(@RequestBody ResetPassDTO resetPassDTO)
+     throws NoSuchAlgorithmException {
+    if (userService.resetPassword(resetPassDTO) != null) {
+      return ResponseEntity.ok().body("You've successfully reset your password");
+    } else {
+      return new ResponseEntity<>("Invalid reset token or token has expired",
+                                  HttpStatus.BAD_REQUEST);
+    }
   }
 }
