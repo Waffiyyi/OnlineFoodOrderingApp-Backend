@@ -1,6 +1,5 @@
-FROM openjdk:17
-LABEL maintainer = "eventbookingdevs"
+FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
-COPY Online-Food-Ordering-0.0.1-SNAPSHOT.jar /app/Online-Food-Ordering-0.0.1-SNAPSHOT.jar
+COPY target/Online-Food-Ordering-0.0.1-SNAPSHOT.jar Online-Food-Ordering-0.0.1-SNAPSHOT.jar
 EXPOSE 8011
 ENTRYPOINT ["java", "-jar", "Online-Food-Ordering-0.0.1-SNAPSHOT.jar"]
