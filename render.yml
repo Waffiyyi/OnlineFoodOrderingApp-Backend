@@ -3,4 +3,4 @@ services:
     name: my-app
     env: java
     buildCommand: ./mvnw clean package
-    startCommand: java -jar target/my-app-1.0.0.jar
+    startCommand: java -jar target/Online-Food-Ordering-0.0.1-SNAPSHOT.jar

@@ -36,7 +36,7 @@ public class AppConfig {
        SessionCreationPolicy.STATELESS)).authorizeHttpRequests(
        Authorize -> Authorize
                        .requestMatchers(HttpMethod.POST,
-                                        "/auth/**").permitAll()
+                                        "/auth/**", "/stripe/webhook/**").permitAll()
                        .requestMatchers(
                           "/api/admin/**").hasAnyRole("RESTAURANT_OWNER",
                                                       "ADMIN").requestMatchers(
