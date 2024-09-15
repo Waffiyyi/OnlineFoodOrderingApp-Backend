@@ -22,10 +22,19 @@ jobs:
       - name: Build Project
         run: mvn clean install -DskipTests
 
+      - name: Build Docker image
+        run: |
+          # Ensure the target directory exists
+          if [ ! -f target/Online-Food-Ordering-0.0.1-SNAPSHOT.jar ]; then
+            echo "JAR file not found, build failed!"
+            exit 1
+          fi
+          docker build -t online-food-ordering .  
+
       - name: Deploy to Render
         run: |
           curl -X POST \
           -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
           -H "Content-Type: application/json" \
-          --data '{"serviceId": "${{ secrets.RENDER_SERVICE_ID }}", "clearCache": false}' \
+          --data '{"serviceId": "'"${{ secrets.RENDER_SERVICE_ID }}"'", "clearCache": false}' \
           https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys
