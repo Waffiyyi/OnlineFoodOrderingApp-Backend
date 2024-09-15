@@ -1,4 +1,4 @@
-name: CI To Deploy To EC2
+name: CI To Deploy To Render
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
@@ -21,3 +21,11 @@ jobs:
 
       - name: Build Project
         run: mvn clean install -DskipTests
+
+      - name: Deploy to Render
+        run: |
+          curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+          -H "Content-Type: application/json" \
+          --data '{"serviceId": "${{ secrets.RENDER_SERVICE_ID }}", "clearCache": false}' \
+          https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys
