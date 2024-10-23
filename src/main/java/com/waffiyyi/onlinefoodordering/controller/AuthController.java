@@ -5,7 +5,6 @@ import com.waffiyyi.onlinefoodordering.DTOs.ResetPassDTO;
 import com.waffiyyi.onlinefoodordering.config.JwtProvider;
 import com.waffiyyi.onlinefoodordering.enums.USER_ROLE;
 import com.waffiyyi.onlinefoodordering.exception.BadRequestException;
-import com.waffiyyi.onlinefoodordering.exception.UserNotFoundException;
 import com.waffiyyi.onlinefoodordering.model.Cart;
 import com.waffiyyi.onlinefoodordering.model.User;
 import com.waffiyyi.onlinefoodordering.repository.CartRepository;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
-import java.util.Collections;
 
 @RestController
 @RequestMapping("/auth")
@@ -51,10 +49,6 @@ public class AuthController {
     if (!PasswordValidator.isValid(user.getPassword())) {
       throw new BadRequestException("Invalid password format, password must include at " +
                                        "least one uppercase letter, one lowercase letter, and one digit ",
-                                    HttpStatus.BAD_REQUEST);
-    }
-    if (user.getFullName() == null) {
-      throw new BadRequestException("Please input your full name",
                                     HttpStatus.BAD_REQUEST);
     }
 
