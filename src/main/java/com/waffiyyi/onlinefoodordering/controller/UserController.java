@@ -10,14 +10,17 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
-  private final UserService userService;
+   private final UserService userService;
 
-  @GetMapping("/profile")
-  public ResponseEntity<User> findUserByJwt(@RequestHeader("Authorization") String jwt) {
-    return new ResponseEntity<>(userService.findUserByJWTToken(jwt), HttpStatus.OK);
-  }
+   @GetMapping("/profile")
+   public ResponseEntity<Map<String, Object>> findUserByJwt(
+     @RequestHeader("Authorization") String jwt) {
+      return new ResponseEntity<>(userService.getUserDetails(jwt), HttpStatus.OK);
+   }
 }

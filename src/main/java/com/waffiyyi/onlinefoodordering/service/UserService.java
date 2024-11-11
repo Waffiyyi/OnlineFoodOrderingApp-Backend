@@ -4,14 +4,17 @@ import com.waffiyyi.onlinefoodordering.DTOs.ResetPassDTO;
 import com.waffiyyi.onlinefoodordering.model.User;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 public interface UserService {
-  User findUserByJWTToken(String jwt);
+   User findUserByJWTToken(String jwt);
 
-  User findUserByEmail(String email);
+   Map<String, Object> getUserDetails(String jwt);
 
-  void initiateResetRequest(String email, String resetType) throws
-                                                            NoSuchAlgorithmException;
+   User findUserByEmail(String email);
 
-  String resetPassword(ResetPassDTO resetPassDTO) throws NoSuchAlgorithmException;
+   void initiateResetRequest(String email, String resetType) throws
+                                                             NoSuchAlgorithmException;
+
+   String resetPassword(ResetPassDTO resetPassDTO) throws NoSuchAlgorithmException;
 }
