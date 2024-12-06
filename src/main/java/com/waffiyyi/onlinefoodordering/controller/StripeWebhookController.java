@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/stripe/webhook")
+@RequestMapping("/stripe/crave-courier/webhook")
 @RequiredArgsConstructor
 @Slf4j
 public class StripeWebhookController {
